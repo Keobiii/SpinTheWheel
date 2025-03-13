@@ -27,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -61,7 +62,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Dialog.CustomCardDialog
+import com.example.myapplication.Games.GameUI
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.pageBackground
 import com.example.myapplication.ui.theme.yelloowww
@@ -178,6 +184,49 @@ class MainActivity : ComponentActivity() {
 //    }
 //}
 
+@Composable
+fun Navigation() {
+    val navController = rememberNavController()
+
+//    val fontFamily = FontFamily(
+//        Font(R.font.lexend_thin, FontWeight.Thin),
+//        Font(R.font.lexend_light, FontWeight.Light),
+//        Font(R.font.lexend_regular, FontWeight.Normal),
+//        Font(R.font.lexend_medium, FontWeight.Medium),
+//        Font(R.font.lexend_semibold, FontWeight.SemiBold),
+//        Font(R.font.lexend_bold, FontWeight.Bold),
+//        Font(R.font.lexend_extrabold, FontWeight.ExtraBold),
+//    )
+
+//    Scaffold(
+//        topBar = {
+//            TopNavigationBar(navController = navController, fontFamily = fontFamily)
+//        }
+//    ) { padding ->
+//        NavHost(
+//            navController = navController,
+//            startDestination = "home",  // Start with Home after Splash
+//            modifier = Modifier.padding(padding)
+//        ) {
+//            composable("home") { Home(navController, fontFamily) }
+//            composable("top_up") { TopUp(fontFamily) }
+//            composable("profile") { Profile(fontFamily) }
+//            composable(
+//                "gameUI/{index}/{title}",
+//                arguments = listOf(
+//                    navArgument("index") { type = NavType.IntType },
+//                    navArgument("title") { type = NavType.StringType }
+//                )
+//            ) { backStackEntry ->
+//                val index = backStackEntry.arguments?.getInt("index") ?: 0
+//                val title = backStackEntry.arguments?.getString("title") ?: "Unknown"
+//
+//                GameUI(index, fontFamily, title)
+//            }
+//
+//        }
+//    }
+}
 
 
 
