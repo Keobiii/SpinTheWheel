@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.graphics.Paint
 import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -18,6 +19,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -35,90 +38,78 @@ data class WheelSegment(val text: String, val backgroundBrush: Color, val textCo
 fun SpinWheel(
     modifier: Modifier = Modifier,
     items: List<WheelSegment>,
-    outlineSizeDp: Dp = 4.dp,
-    outlineColor: Color = Color.Black,
-    backgroundColor: Color = Color.Transparent,
-    minimumFullRotations: Int = 10,
-    winnerIndex: Int? = null,
-    spinDuration: Int = 5000,
-    spinAction: (() -> Unit)? = null
+    rotation: Float,
+    duration: Int,
+    onSegmentSelected: (String) -> Unit // Callback to handle the selected segment
 ) {
-    require(items.isNotEmpty()) { "Require at least one item!" }
-
-    val numberOfItems by remember { mutableStateOf(items.size) }
-    val segmentAngleSize by remember { mutableStateOf(360f / numberOfItems) }
-    val middleOfSegmentAngleSize by remember { mutableStateOf(segmentAngleSize / 2) }
-    val borderSize = with(LocalDensity.current) { outlineSizeDp.toPx() }
-    val numberOfPreSpinsAngle by remember { mutableStateOf(minimumFullRotations * 360) }
-    val textMeasurer = rememberTextMeasurer()
-
-    val winnerFullRotateAngle by remember(winnerIndex) { mutableStateOf(if (winnerIndex != null) (numberOfPreSpinsAngle + (segmentAngleSize * (items.size - (winnerIndex + 1))) + middleOfSegmentAngleSize) else 0f) }
-
-    val rotationAngle by animateFloatAsState(
-        targetValue = winnerFullRotateAngle,
-        animationSpec = tween(spinDuration, easing = EaseOutCirc),
+    val animatedRotation by animateFloatAsState(
+        targetValue = rotation,
+        animationSpec = tween(durationMillis = duration, easing = EaseOutCirc),
         label = "Spin Wheel rotation value"
     )
 
+    val segmentAngleSize = 360f / items.size
+
+    // Calculate the angle where the arrow points
+    val selectedAngle = (animatedRotation % 360 + 360) % 360 // Normalize angle
+    val selectedSegmentIndex = ((selectedAngle + segmentAngleSize / 2) % 360) / segmentAngleSize
+
+    // Call the onSegmentSelected callback to notify which segment is selected
+    onSegmentSelected(items[selectedSegmentIndex.toInt()].text)
+
     Canvas(modifier = modifier) {
-        rotate(rotationAngle) {
-            drawCircle(color = backgroundColor, radius = size.width / 2 - borderSize)
-            items.forEachIndexed { index, s ->
+        rotate(animatedRotation) {
+            items.forEachIndexed { index, item ->
                 rotate(segmentAngleSize * index) {
                     drawArc(
-                        color = s.backgroundBrush,  // Convert Color to Brush here
-                        -90f,
-                        segmentAngleSize,
-                        true,
-                        topLeft = Offset(-borderSize, borderSize)
+                        color = item.backgroundBrush,
+                        startAngle = -90f,
+                        sweepAngle = segmentAngleSize,
+                        useCenter = true
                     )
                 }
             }
-            items.forEachIndexed { index, s ->
-                rotate(segmentAngleSize * index) {
-                    drawLine(
-                        color = outlineColor,
-                        start = Offset(size.width / 2, size.height / 2),
-                        end = Offset(size.width / 2, 0f + borderSize),
-                        strokeWidth = borderSize
-                    )
-                }
-                rotate(segmentAngleSize * index + middleOfSegmentAngleSize) {
-                    drawText(
-                        textMeasurer,
-                        s.text,
-                        topLeft = Offset(
-                            (size.width / 2) - ((size.width / 4) / items.size),
-                            (size.height / 2) / 4
-                        ),
-                        style = TextStyle(
-                            color = s.textColor,
-                            shadow = Shadow(
-                                color = Color.Black,
-                                offset = Offset(0f, 0f),
-                                blurRadius = 8f,
-                            ),
-                            fontSize = ((size.width / 4) / items.size).sp,
+
+            items.forEachIndexed { index, item ->
+                rotate(segmentAngleSize * index + segmentAngleSize / 2) {
+                    drawContext.canvas.nativeCanvas.apply {
+                        drawText(
+                            item.text,
+                            size.width / 2,
+                            size.height / 12,
+                            Paint().apply {
+                                color = item.textColor.toArgb()
+                                textAlign = Paint.Align.CENTER
+                                textSize = 32f
+                                isAntiAlias = true
+                            }
                         )
-                    )
+                    }
                 }
             }
+
+            // Draw the outer circle
             drawCircle(
-                color = outlineColor,
-                radius = size.width / 2 - borderSize / 2,
-                style = Stroke(borderSize)
+                color = Color.Black,
+                radius = size.width / 2,
+                style = Stroke(4.dp.toPx())
             )
         }
+
+        // Pointer Arrow
         val path = Path().apply {
             moveTo(size.width / 2 - 20f, -10f)
             lineTo(size.width / 2, 80f)
             lineTo(size.width / 2 + 20f, -10f)
             close()
         }
-        drawPath(path, color = Color.Red) // TODO: Add pointer arrow
+        drawPath(path, color = Color.DarkGray)
     }
-
 }
+
+
+
+
 
 //@Composable
 //fun SpinWheelWithButton() {
@@ -174,4 +165,3 @@ fun SpinWheel(
 //fun DefaultPreview() {
 //    SpinWheelWithButton()
 //}
-
