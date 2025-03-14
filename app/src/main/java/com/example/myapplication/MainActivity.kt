@@ -6,120 +6,31 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.Dialog.CustomCardDialog
+import androidx.navigation.navArgument
 import com.example.myapplication.Games.GameUI
+import com.example.myapplication.Home.HomePage
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.pageBackground
-import com.example.myapplication.ui.theme.yelloowww
 import kotlin.random.Random
 
 
-fun generateRandomCounts(): Pair<Int, Int> {
-    val diamondCount = Random.nextInt(1, 4)
-    val bombCount = 9 - diamondCount
-    return Pair(bombCount, diamondCount)
-}
-@Composable
-fun AlertDialogExample(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
-) {
-    AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Example Icon")
-        },
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text("Confirm")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text("Dismiss")
-            }
-        }
-    )
-}
 
 
 
@@ -134,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize().background(pageBackground)
                 ) {
-                   Carousel()
+                  Navigation()
                 }
             }
         }
@@ -198,34 +109,34 @@ fun Navigation() {
 //        Font(R.font.lexend_extrabold, FontWeight.ExtraBold),
 //    )
 
-//    Scaffold(
+    Scaffold(
 //        topBar = {
 //            TopNavigationBar(navController = navController, fontFamily = fontFamily)
 //        }
-//    ) { padding ->
-//        NavHost(
-//            navController = navController,
-//            startDestination = "home",  // Start with Home after Splash
-//            modifier = Modifier.padding(padding)
-//        ) {
-//            composable("home") { Home(navController, fontFamily) }
+    ) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",  // Start with Home after Splash
+            modifier = Modifier.padding(padding)
+        ) {
+            composable("home") { HomePage(navController) }
 //            composable("top_up") { TopUp(fontFamily) }
 //            composable("profile") { Profile(fontFamily) }
-//            composable(
-//                "gameUI/{index}/{title}",
-//                arguments = listOf(
-//                    navArgument("index") { type = NavType.IntType },
-//                    navArgument("title") { type = NavType.StringType }
-//                )
-//            ) { backStackEntry ->
-//                val index = backStackEntry.arguments?.getInt("index") ?: 0
-//                val title = backStackEntry.arguments?.getString("title") ?: "Unknown"
-//
-//                GameUI(index, fontFamily, title)
-//            }
-//
-//        }
-//    }
+            composable(
+                "gameUI/{index}/{gameName}",
+                arguments = listOf(
+                    navArgument("index") { type = NavType.IntType },
+                    navArgument("gameName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val index = backStackEntry.arguments?.getInt("index") ?: 0
+                val gameName = backStackEntry.arguments?.getString("gameName") ?: "Unknown"
+
+                GameUI(index, gameName)
+            }
+
+        }
+    }
 }
 
 

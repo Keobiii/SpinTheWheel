@@ -23,11 +23,15 @@ val ch1EndColor = Color(0xFF7d7cf9)
 val ch2StartColor = Color(0xFFec8235)
 val ch2EndColor = Color(0xFFf9c823)
 
-val ch3StartColor = Color(0xFFc11e38)
-val ch3EndColor = Color(0xFFf19e18)
+val ch3StartColor = Color(0xFF76030f)
+val ch3EndColor = Color(0xFFF6D108)
 
-val ch4StartColor = Color(0xFF2b0948)
-val ch4EndColor = Color(0xFF76030f)
+val ch4StartColor = Color(0xFF76030f)
+val ch4EndColor = Color(0xFFBA1313)
+
+//BA1313
 
 
+
+val eggGray = Color(0x369A9A9A)
 val yelloowww = Color(0xFFffd949)

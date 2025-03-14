@@ -1,7 +1,10 @@
 package com.example.myapplication
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.myapplication.ui.theme.ch1EndColor
 import com.example.myapplication.ui.theme.ch1StartColor
 import com.example.myapplication.ui.theme.ch2EndColor
@@ -45,35 +49,43 @@ import kotlinx.coroutines.delay
 
 val carousel = listOf(
     Carousel(
+        id = 1,
         carouselType = "discount",
-        title = "Get 10 Free Spin!",
+        gameName = "gameOne",
+        head = "Get 10 Free Spin!",
         description = "Earn Free 10 Spin for every Php 1000 spend at Wizzard Land",
         color =  getGradient(ch1StartColor, ch1EndColor),
         image = R.drawable.ch1
     ),
 
     Carousel(
+        id = 2,
         carouselType = "free",
-        title = "Free Php 100!",
+        gameName = "gameTwo",
+        head = "Free Php 100!",
         description = "Get Php 100 for new user!",
         color =  getGradient(ch2StartColor, ch2EndColor),
         image = R.drawable.ch2
     ),
 
     Carousel(
+        id = 3,
         carouselType = "discount",
-        title = "50% Cashback!",
+        gameName = "gameThree",
+        head = "50% Cashback!",
         description = "Up to 50% cashback you can earn from top up!",
         color =  getGradient(ch3StartColor, ch3EndColor),
-        image = R.drawable.ch1
+        image = R.drawable.ch3
     ),
 
     Carousel(
+        id = 4,
         carouselType = "free",
-        title = "Earn Php 100!",
+        gameName = "gameFour",
+        head = "Earn Php 100!",
         description = "Play the new Game and get Php 100!",
         color =  getGradient(ch4StartColor, ch4EndColor),
-        image = R.drawable.ch2
+        image = R.drawable.ch4
     )
 )
 
@@ -88,7 +100,7 @@ fun getGradient(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Carousel() {
+fun Carousel(navController: NavHostController) {
 
     val pagerState = rememberPagerState(pageCount = carousel.size)
 
@@ -111,6 +123,7 @@ fun Carousel() {
         ) {
             HorizontalPager(
                 state = pagerState,
+                itemSpacing = 10.dp,
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(20.dp)),
@@ -118,23 +131,33 @@ fun Carousel() {
                 ) { currentPage ->
 
                 Card(
-                    modifier = Modifier.fillMaxSize().padding(start = 10.dp, end = 10.dp),
+                    modifier = Modifier.fillMaxSize(),
                     elevation = CardDefaults.cardElevation(10.dp),
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxSize().background(carousel[currentPage].color)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(carousel[currentPage].color)
+                            .clickable{
+                                Log.i("Game Index: ", carousel[currentPage].id.toString())
+                                navController.navigate("gameUI/${carousel[currentPage].id}/${carousel[currentPage].gameName}")
+                            }
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxSize().padding(10.dp)
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             Column(
-                                modifier = Modifier.weight(0.6f).fillMaxHeight().padding(end = 5.dp),
+                                modifier = Modifier
+                                    .weight(0.55f)
+                                    .fillMaxHeight()
+                                    .padding(10.dp)
+                                ,
                                 horizontalAlignment = Alignment.Start,
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = 5.dp),
-                                    text = carousel[currentPage].title,
+                                    text = carousel[currentPage].head,
                                     fontSize = 17.sp,
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
@@ -151,13 +174,13 @@ fun Carousel() {
                             }
 
                             Box(
-                                modifier = Modifier.weight(0.4f)
+                                modifier = Modifier.weight(0.45f)
                             ) {
                                 Image(
                                     modifier = Modifier.fillMaxSize(),
                                     painter = painterResource(id = carousel[currentPage].image),
-                                    contentDescription = carousel[currentPage].title,
-                                    contentScale = ContentScale.Inside
+                                    contentDescription = carousel[currentPage].head,
+                                    contentScale = ContentScale.FillHeight
                                 )
                             }
                         }

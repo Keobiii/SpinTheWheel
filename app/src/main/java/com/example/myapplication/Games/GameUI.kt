@@ -25,12 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
-import com.example.myapplication.Carousel
 import com.example.myapplication.ui.theme.pageBackground
 import com.example.myapplication.ui.theme.yelloowww
 
 @Composable
-fun GameUI() {
+fun GameUI(index: Int, gameName: String) {
     val constraints = ConstraintSet {
         val headerContent = createRefFor("headerContent")
         val mainContent = createRefFor("mainContent")
@@ -113,7 +112,20 @@ fun GameUI() {
                 .layoutId("mainContent")
                 .border(1.dp, Color.Yellow)
         ) {
-
+            if (index == 1) {
+                ScratchWin()
+            } else if (index == 2) {
+                Spinner()
+            } else if (index == 3) {
+                Mining(index, gameName)
+            } else {
+                Text(
+                    text = gameName,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
 
         Box(
